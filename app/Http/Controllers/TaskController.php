@@ -11,14 +11,21 @@ use App\Models\Task;
 
 class TaskController extends Controller
 {
+
+    public function index(){
+        return Task::all();
+    }
+
     public function createTask(request $request)
     {
         $user = Auth::user();
         
         $task = new Task();
         $task->title = $request->title;
+        // $task->user_id = $user->id;
         $task->description = $request->description;
         $task->deadline = $request->deadline;
+        // $task->privacy = $request->privacy;
         $task->checked = 0;        
         
         $task->save();
@@ -32,74 +39,89 @@ class TaskController extends Controller
         
     public function getTasks()
     {
-        $user = Auth::user();
+        // $user = Auth::user();
             
-        $tasks = Task::all()->where('user_id', $user->id);
+        // $task = Task::all()->where('user_id', $user->id);
+        $task = Task::all();
             
-        return response()->json(compact('tasks'),200);
+        return response()->json(compact('task'),200);
     }
         
     public function getSharedTasks(){
-    $tasks = Task::all()->where('privacy', '1');
+    $task = Task::all()->where('privacy', '1');
             
-    return response()->json(compact('tasks'),200);
+    return response()->json(compact('task'),200);
     }
 
     public function getDetailTask($id)
     {
-        $user = Auth::user();
+        // $user = Auth::user();
             
-        $tasks = Task::find($id);
+        $task = Task::find($id);
     
-        return response()->json(compact('tasks'),200);
+        return response()->json(compact('task'),200);
         
     }
         
     public function updateTask($id, request $request)
     {
-        $user = Auth::user();
-            
-        $tasks = Task::find($id);
-            if ($tasks->id == $id && $tasks->user_id == $user->id){
-                $tasks->title = $request->title;
-                $tasks->description = $request->description;
-                $tasks->deadline = $request->deadline;
-                $tasks->privacy = $request->privacy;
+        // $user = Auth::user();
+            $task = Task::find($id);
+        // $task = Task::select('*')->where('id', $id)->get();
+            // if ($task->id == $id && $task->user_id == $user->id){
+            // if ($task->id == $id){
+                $task->title = $request->title;
+                $task->description = $request->description;
+                $task->deadline = $request->deadline;
+                // $task->privacy = $request->privacy;
                 
-                $tasks->update_at = now();
-                $tasks->save();
+                // $task->update_at = now();
+                $task->save();
                 
                 return response()->json([
                     'success' => true,
                     'message' => "Berhasil update"
                     ]);
-                }else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Akses Ditolak"
-                        ]);
-                    }
+                // }else {
+                //     return response()->json([
+                //         'success' => false,
+                //         'message' => "Akses Ditolak"
+                //         ]);
+                //     }
     }
 
     public function deleteTask($id)
     {
-        $user = Auth::user();
-        $tasks = Task::find($id);
+        // $user = Auth::user();
+        $task = Task::find($id);
                  
-        if ($tasks->user_id == $user->id) {
-            $tasks->delete();
+        // if ($task->user_id == $user->id) {
+            $task->delete();
             return response()->json([
                 'success' => true,
                 'message' => "Berhasil delete"
                 ]);
-        } else {
-            return response()->json([
-               'success' => false,
-               'message' => "Akses Ditolak"
-                ]);
-        }
+        // } else {
+        //     return response()->json([
+        //        'success' => false,
+        //        'message' => "Akses Ditolak"
+        //         ]);
+        // }
 
     }    
+
+    public function checkItem($id)
+    {
+        $task = Task::find($id);
+
+        $task->checked = 1;
+        $task->save();
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => "Semangat! 1 task selesai."
+                    ]);
+    }
 }
                     
                     

@@ -89,6 +89,8 @@ class UserController extends Controller
                 'user' => $user,
                 'token' => $token
             ], 200);
+        // return response()->json(compact('token'),200);
+
         }
     }
 
@@ -158,159 +160,159 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            //'user_level' => 'required|integer|max:2|min:1',
-            'user_picture' => 'image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+    // public function register(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required|string|max:255',
+    //         'username' => 'required|string|max:255|unique:users',
+    //         'email' => 'required|string|email|max:255|unique:users',
+    //         'password' => 'required|string|min:8|confirmed',
+    //         //'user_level' => 'required|integer|max:2|min:1',
+    //         'user_picture' => 'image|mimes:jpeg,png,jpg|max:2048',
+    //     ]);
         
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+    //     if($validator->fails()){
+    //         return response()->json($validator->errors()->toJson(), 400);
+    //     }
 
-        $user = new User;
-        $user->username = $request->username;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->user_level = 1;
+    //     $user = new User;
+    //     $user->username = $request->username;
+    //     $user->name = $request->name;
+    //     $user->email = $request->email;
+    //     $user->password = Hash::make($request->password);
+    //     $user->user_level = 1;
 
-        if(!empty($request->file('user_picture'))) {
-            $file = $request->file('user_picture');
-            $upload_dest = 'user_picture';
-            $extension = $file->extension();
-            $path = $file->storeAs(
-                $upload_dest, $request->username.'.'.$extension
-            );
-            $user->user_picture = $path;
+    //     if(!empty($request->file('user_picture'))) {
+    //         $file = $request->file('user_picture');
+    //         $upload_dest = 'user_picture';
+    //         $extension = $file->extension();
+    //         $path = $file->storeAs(
+    //             $upload_dest, $request->username.'.'.$extension
+    //         );
+    //         $user->user_picture = $path;
 
-        } 
+    //     } 
         
-        $user->save();
-        $token = JWTAuth::fromUser($user);
-        return response()->json(compact('user','token'),200);
-    }
-    public function update(Request $request){
-        $user = Auth::user();
+    //     $user->save();
+    //     $token = JWTAuth::fromUser($user);
+    //     return response()->json(compact('user','token'),200);
+    // }
+    // public function update(Request $request){
+    //     $user = Auth::user();
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,id,$id',
-            'email' => 'required|string|email|max:255|unique:users,id,$id',
-            //'user_level' => 'required|integer|min:1|max:2',
-            'user_picture' => 'image|mimes:jpeg,jpg,png|max:2048',
-        ]);
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required|string|max:255',
+    //         'username' => 'required|string|max:255|unique:users,id,$id',
+    //         'email' => 'required|string|email|max:255|unique:users,id,$id',
+    //         //'user_level' => 'required|integer|min:1|max:2',
+    //         'user_picture' => 'image|mimes:jpeg,jpg,png|max:2048',
+    //     ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+    //     if($validator->fails()){
+    //         return response()->json($validator->errors()->toJson(), 400);
+    //     }
         
-        if($request->username != null){
-            $user->username = $request->username;
-        }
+    //     if($request->username != null){
+    //         $user->username = $request->username;
+    //     }
             
         
-        if($request->name  != null){
-            $user->name = $request->name;
-        }
+    //     if($request->name  != null){
+    //         $user->name = $request->name;
+    //     }
 
-        if($request->email != null){
-            $user->email = $request->email;
-        }
+    //     if($request->email != null){
+    //         $user->email = $request->email;
+    //     }
         
-        if($request->gender != null){
-            $user->gender = $request->gender;    
-        }
+    //     if($request->gender != null){
+    //         $user->gender = $request->gender;    
+    //     }
 
-        if($request->telp != null){
-            $user->telp = $request->telp;
-        }
+    //     if($request->telp != null){
+    //         $user->telp = $request->telp;
+    //     }
 
-        if($request->address != null){
-            $user->address = $request->address;
-        }
+    //     if($request->address != null){
+    //         $user->address = $request->address;
+    //     }
 
-        $user->save();
+    //     $user->save();
 
-        return response()->json(compact('user'));
-    }
+    //     return response()->json(compact('user'));
+    // }
 
-    public function updatePicture(Request $request){
-        $user = Auth::user();
+    // public function updatePicture(Request $request){
+    //     $user = Auth::user();
 
-        $validator = Validator::make($request->all(), [
-            'user_picture' => 'required|image|mimes:jpeg,jpg,png|max:2048',
-        ]);
+    //     $validator = Validator::make($request->all(), [
+    //         'user_picture' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+    //     ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
-        if($user->user_picture != null){
-            unlink('storage/'.$user->user_picture);
-        }
-        $file = $request->file('user_picture');
-        $upload_dest = 'user_picture';
-        $extension = $file->extension();
-        $path = $file->storeAs(
-            $upload_dest, $user->username.'.'.$extension
-        );
-        $user->user_picture = $path;
-        $user->save();
+    //     if($validator->fails()){
+    //         return response()->json($validator->errors()->toJson(), 400);
+    //     }
+    //     if($user->user_picture != null){
+    //         unlink('storage/'.$user->user_picture);
+    //     }
+    //     $file = $request->file('user_picture');
+    //     $upload_dest = 'user_picture';
+    //     $extension = $file->extension();
+    //     $path = $file->storeAs(
+    //         $upload_dest, $user->username.'.'.$extension
+    //     );
+    //     $user->user_picture = $path;
+    //     $user->save();
 
-        return response()->json(compact('user'));
-    }
+    //     return response()->json(compact('user'));
+    // }
 
-    public function updatePassword(Request $request){
-        $user = Auth::user();
+    // public function updatePassword(Request $request){
+    //     $user = Auth::user();
 
-        $validator = Validator::make($request->all(), [
-            'password' => 'required|string|min:6|confirmed',
-            'old_password' => 'required|string|min:6|max:100'
-        ]);
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
+    //     $validator = Validator::make($request->all(), [
+    //         'password' => 'required|string|min:6|confirmed',
+    //         'old_password' => 'required|string|min:6|max:100'
+    //     ]);
+    //     if($validator->fails()){
+    //         return response()->json($validator->errors()->toJson(), 400);
+    //     }
         
-        if(Hash::check($request->password, $user->password)){
-            return response()->json([
-                'success' => false,
-                'message' => "Password baru dan lama tidak boleh sama"
-            ]);
-        }else if(Hash::check($request->old_password, $user->password)){
+    //     if(Hash::check($request->password, $user->password)){
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => "Password baru dan lama tidak boleh sama"
+    //         ]);
+    //     }else if(Hash::check($request->old_password, $user->password)){
             
-            $user->password = Hash::make($request->password);
-            $user->save();
-            auth()->logout();
-            return response()->json([
-                'success' => true,
-                'message' => "Berhasil"
-            ]);
-        }else{
-            return response()->json([
-                'success' => false,
-                'message' => "Password lama salah"
-            ]);
-        }
+    //         $user->password = Hash::make($request->password);
+    //         $user->save();
+    //         auth()->logout();
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => "Berhasil"
+    //         ]);
+    //     }else{
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => "Password lama salah"
+    //         ]);
+    //     }
 
 
-        // return response()->json(['message' => 'Password Update Successfully'],200);
+    //     // return response()->json(['message' => 'Password Update Successfully'],200);
 
-    }
+    // }
 
-    public function delete(){
+    // public function delete(){
 
-        $user = Auth::user();
+    //     $user = Auth::user();
     
-        unlink('storage/'.$user->user_picture);
-        $user->delete();
+    //     unlink('storage/'.$user->user_picture);
+    //     $user->delete();
 
-        return response()->json(['message' => 'Delete Successfully'],200);
-    }
+    //     return response()->json(['message' => 'Delete Successfully'],200);
+    // }
     
 }
