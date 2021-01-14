@@ -109,18 +109,30 @@ class TaskController extends Controller
         // }
 
     }    
-
+    
     public function checkItem($id)
     {
         $task = Task::find($id);
+        if ($task->checked == 0){
+            $task->checked = 1;
+            $task->save();
 
-        $task->checked = 1;
-        $task->save();
-                
-                return response()->json([
-                    'success' => true,
-                    'message' => "Semangat! 1 task selesai."
-                    ]);
+            return response()->json([
+                'success' => true,
+                'message' => "Semangat! 1 task selesai."
+                ]);
+        }else{
+            $task->checked = 0;
+            $task->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Semangat! 1 task belum selesai."
+                ]);
+        }
+
+        
+        
     }
 }
                     
